@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* For webkit-based browsers like Chrome, Safari, and Edge */
+/* Hide scrollbar by default */
+.scrollbar {
+  overflow-y: scroll; /* Allow scrolling */
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent; /* Make scrollbar invisible */
+}
+
+/* Show the scrollbar when the user hovers over the element */
+.scrollbar:hover {
+  scrollbar-color: #6b6b6b #1e1e1e; /* Thumb color and track color */
+}
+
+/* For webkit-based browsers (Chrome, Safari, Edge) */
+.scrollbar::-webkit-scrollbar {
+  width: 8px; /* Set scrollbar width */
+  opacity: 0; /* Hide scrollbar by default */
+  transition: opacity 0.3s ease; /* Smooth transition for opacity */
+}
+
+.scrollbar:hover::-webkit-scrollbar {
+  opacity: 1; /* Make the scrollbar visible when hovering */
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background-color: #6b6b6b; /* Color of the scrollbar thumb */
+  border-radius: 10px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background-color: #1e1e1e; /* Color of the scrollbar track */
+  border-radius: 10px;
+}
