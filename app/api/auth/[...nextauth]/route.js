@@ -3,7 +3,9 @@ import GitHubProvider from 'next-auth/providers/github'
 import connectDB from '@/db/connectDb'
 import User from '@/models/User'
 
-const authOptions = {
+console.log("✅ [NextAuth] Route initialized")
+
+const handler = NextAuth({
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_ID,
@@ -11,33 +13,51 @@ const authOptions = {
     }),
   ],
   pages: {
-    signIn: '/dashboard', // Optional custom login page
-    error: '/login'   // Redirect errors back to login
+    signIn: '/dashboard',
+    error: '/login',
   },
   callbacks: {
     async signIn({ user, account }) {
-      if (account?.provider === 'github') {
-        await connectDB()
-        const existingUser = await User.findOne({ email: user.email })
-        if (!existingUser) {
-          await User.create({
-            email: user.email,
-            username: user.email.split('@')[0],
-          })
+      console.log("🔑 [signIn] Callback triggered")
+      try {
+        if (account?.provider === 'github') {
+          console.log("🌐 GitHub login detected")
+          await connectDB()
+          console.log("✅ MongoDB connected")
+
+          const existingUser = await User.findOne({ email: user.email })
+          console.log(existingUser ? "🧑 User found" : "🆕 Creating new user")
+
+          if (!existingUser) {
+            await User.create({
+              email: user.email,
+              username: user.email.split('@')[0],
+            })
+            console.log("✅ User created in DB")
+          }
         }
+        return true
+      } catch (error) {
+        console.error("❌ Error in signIn callback:", error)
+        return false
       }
-      return true
     },
+
     async session({ session }) {
-      const dbUser = await User.findOne({ email: session.user.email })
-      if (dbUser) {
-        session.user.name = dbUser.username
+      console.log("🧾 [session] Callback triggered")
+      try {
+        const dbUser = await User.findOne({ email: session.user.email })
+        if (dbUser) {
+          session.user.name = dbUser.username
+          console.log("✅ Username set in session:", dbUser.username)
+        }
+        return session
+      } catch (error) {
+        console.error("❌ Error in session callback:", error)
+        return session
       }
-      return session
     },
   },
-}
-
-const handler = NextAuth(authOptions)
+})
 
 export { handler as GET, handler as POST }
