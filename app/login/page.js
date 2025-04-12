@@ -11,7 +11,7 @@ const Login = () => {
   useEffect(() => {
     document.title = "Login - Get Me a Chai"
     if(session) { 
-      router.push('/dashboard')
+      router.replace('/dashboard')
   }
   },)
   

@@ -17,7 +17,7 @@ const Navbar = () => {
     signOut()
     setTimeout(() => {
       setshowdropdown(false)
-    }, 1000);
+    }, 500);
     
     
   }

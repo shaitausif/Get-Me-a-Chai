@@ -39,14 +39,14 @@ const PaymentPage = ({ username }) => {
         transition: Bounce,
       });
     }
-    Router.push(`/${username}`)
+    Router.replace(`/${username}`)
   }, []);
 
   const handleChange = (e) => {
     setpaymentform({ ...paymentform, [e.target.name]: e.target.value });
   };
 
-  const getData = async (params) => {
+  const getData = async () => {
     let u = await fetchuser(username);
     setcurrentUser(u);
     let dbpayments = await fetchpayments(username);

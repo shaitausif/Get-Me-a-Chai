@@ -5,6 +5,7 @@ import connectDB from "@/db/connectDb";
 import User from "@/models/User";
 
 const page = async ({ params }) => {
+  await connectDB()
   // If the username is not present in the database, show a 404 page.
   const checkUser = async () => {
     let u = await User.findOne({ username: params.username });
@@ -14,7 +15,7 @@ const page = async ({ params }) => {
   };
   await checkUser();
 
-  const { username } = params;  // No need for await here
+  const { username } = await params;  // No need for await here
   return (
     <>   
       <PaymentPage username={username} />

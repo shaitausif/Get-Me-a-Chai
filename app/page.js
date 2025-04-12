@@ -3,7 +3,12 @@ import Image from "next/image";
 import { useSession, signIn, signOut } from "next-auth/react"
 import Link from "next/link";
 
+
 export default function Home() {
+
+
+
+
   return (  
     <>
       <div className="flex flex-col justify-center  px-5 md:px-0 text-white h-[43vh] items-center text-xs md:text-base gap-4">
