@@ -9,6 +9,7 @@ const page = () => {
   )
 }
 
+// Generate metadata for this page
 export default page
 export const metadata = {
   title: "Dashboard - Get Me a Chai"
