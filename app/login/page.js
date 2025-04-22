@@ -46,12 +46,7 @@ const Login = () => {
       password : data.password,
       redirect : false
     })
-    if(!result){
-      toast({
-        title : 'Nextauth error occurred',
-        variant : 'destructive'
-      })
-    }
+   
     if(result.error){
       setisSubmitting(false)
       toast({
