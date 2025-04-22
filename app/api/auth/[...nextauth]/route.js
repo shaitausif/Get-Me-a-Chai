@@ -61,7 +61,7 @@ const handler = NextAuth({
   session : {
     strategy : 'jwt'
   },
-  debug : true,
+  debug : true,                                           
   callbacks: {
     async signIn({ user, account }) {
       console.log("🔑 [signIn] Callback triggered")
