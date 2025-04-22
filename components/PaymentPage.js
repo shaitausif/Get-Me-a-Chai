@@ -3,13 +3,16 @@ import React, { useEffect, useState } from "react";
 import Script from "next/script";
 import { fetchuser, fetchpayments, initiate } from "@/actions/useraction";
 import { useSearchParams } from "next/navigation";
-import { ToastContainer, toast } from "react-toastify";
+import { useToast } from "@/hooks/use-toast"
 import "react-toastify/dist/ReactToastify.css";
 import { Bounce } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const PaymentPage = ({ username }) => {
   // const { data: session } = useSession()
+  const {toast} = useToast()
+  const {data: session } = useSession()
 
   const [paymentform, setpaymentform] = useState({
     name: "",
@@ -27,17 +30,10 @@ const PaymentPage = ({ username }) => {
 
   useEffect(() => {
     if (searchParams.get("paymentdone") == "true") {
-      toast("Thanks for your donation", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
+      toast({
+        title : "Thanks for your donation",
+        
+      })
     }
     Router.replace(`/${username}`)
   }, []);
@@ -57,6 +53,23 @@ const PaymentPage = ({ username }) => {
   // Get the order Id
 
   const pay = async (amount) => {
+
+    if(!session && (!currentUser.razorpayid || !currentUser.razorpaysecret)){
+      toast({
+        title : "This User hasn't provided credentials for payments",
+        variant : 'destructive'
+      })
+      return;
+    }
+    if(!currentUser.razorpayid || !currentUser.razorpaysecret){
+      toast({
+        title : "Please provide razorpay credentials first!",
+        variant : 'destructive'
+      })
+      
+      return
+    }
+    
    
     let a = await initiate(amount, username, paymentform);
     let orderId = a.id;
@@ -88,33 +101,21 @@ const PaymentPage = ({ username }) => {
   };
   return (
     <>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        transition="Bounce"
-      />
-
+     
       <Script src="https://checkout.razorpay.com/v1/checkout.js"></Script>
 
       <div className="cover w-full m-0 p-0 relative">
+        
         <img
-          className="w-full object-cover h-[300px]"
-          src={currentUser.coverpic}
+          className="md:w-full w-fit md:object-cover object-contain h-[300px]"
+          src={currentUser.coverpic || 'data:image/jpeg;base64,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'}
           alt=""
         />
         <div className="absolute right-[38%] md:right-[46.7%] -bottom-10 border border-white rounded-full">
           <div className="w-[80px] h-[80px]">
             <img
               className="object-cover w-[80px] h-[80px] rounded-full"
-              src={currentUser.profilepic}
+              src={currentUser.profilepic || 'https://img.freepik.com/premium-vector/man-avatar-profile-picture-vector-illustration_268834-538.jpg'}
               alt=""
             />
           </div>
@@ -125,7 +126,7 @@ const PaymentPage = ({ username }) => {
 
         <div className="text-slate-400">Let&apos;s help {username} to get a Chai</div>
         <div className="text-slate-400">
-          {payments.length} Payments . ₹{payments.reduce((a,b)=> a + b.amount, 0)} raised
+          {payments.length} {payments.length == 1 ? 'Payment' : 'Payments'} . ₹{payments.reduce((a,b)=> a + b.amount, 0)} raised
         </div>
 
         <div className="payment gap-3 flex flex-col md:flex-row w-[80%] mt-10">

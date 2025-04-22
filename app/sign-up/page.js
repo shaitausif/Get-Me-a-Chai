@@ -11,15 +11,17 @@ import Link from "next/link";
 import { useToast } from "@/hooks/use-toast"
 import loginSchema from "../schemas/loginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 
 
 
 
-const Login = () => {
+
+const SignUp = () => {
   const { data: session } = useSession();
   const router = useRouter() 
   const [isSubmitting, setisSubmitting] = useState(false)
-  const {toast }  = useToast()
+  const {toast} = useToast()
 
   // it will re-render the component after every time screen refreshes
   useEffect(() => {
@@ -41,25 +43,33 @@ const Login = () => {
   const onSubmit = async(data)=> {
     setisSubmitting(true)
 
-    const result = await signIn('credentials',{
-      email : data.email,
-      password : data.password,
-      redirect : false
-    })
-    if(result.error){
-      setisSubmitting(false)
-      toast({
-        title : "Error",
-        description : "Unable to Login the User",
-        variant : 'destructive'
-      })
+    let response = await axios.post('/api/signup',data)
 
+    if(!response.data.success){
+        setisSubmitting(false)
+    }
+    if(response.data.success){
+      
+          setisSubmitting(false)
+          toast({
+            title : "User Created Successfully"
+          })
+          router.push('/login')
+           
+          
+    }
+    if(!response.data.success){
+        
+            toast({
+                title : 'Error',
+                description : response.data.message,
+                variant : 'destructive'
+            })
+       
     }
     setisSubmitting(false)
-    if(result.url){
-      router.replace('/dashboard')
-    }
     reset()
+    
   };
   
   return (
@@ -67,7 +77,7 @@ const Login = () => {
     
       <div className="text-white py-12 container mx-auto ">
         <h1 className="text-center font-bold text-2xl">
-          Login to Get Started
+          SignUp to Get Started
         </h1>
         <div className="flex flex-col  gap-2 min-h-screen items-center p-10">
         
@@ -125,18 +135,18 @@ const Login = () => {
                   <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
                   <p>Please wait</p>
                   </>
-                ) : "Sign In"
+                ) : "Sign Up"
               }
               </Button>
           </form>
         </Form>
         <div className="text-center mt-4">
               <p>
-                Don't have an account?{' '}
+                Already have an Account?{' '}
                 <Link
                  className="text-blue-600 hover:text-blue-800"
-                  href={'/sign-up'}>
-                    Sign Up</Link>
+                  href={'/login'}>
+                    Sign In</Link>
 
               </p>
         </div>
@@ -248,4 +258,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;

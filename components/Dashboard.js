@@ -3,14 +3,14 @@ import React,{useEffect,useState} from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { fetchuser , updateProfile } from "@/actions/useraction";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { Bounce } from "react-toastify";
+import { useToast } from "@/hooks/use-toast"
+
 
 const Page = () => {
   const { data: session, update } = useSession();
   const router = useRouter()   
   const [form, setform] = useState({})
+  const {toast} = useToast()
 
 
   // it will re-render the component after every time screen refreshes
@@ -35,34 +35,14 @@ const Page = () => {
   const handleSubmit = async(data)=>{
       update()
       let a = await updateProfile(data,session.user.name)
-      toast("Profile Updated", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
+      toast({
+        title : "Profile Updated"
+      })
   }
 
   return (
     <> 
-    <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        transition="Bounce"
-      />
+   
     <div className="container mx-auto text-white py-4 px-6">
     <h1 className="text-center my-3 text-3xl font-bold">Welcome to your Dashboard</h1>
     <form className="mx-auto max-w-xl" action={handleSubmit}>
